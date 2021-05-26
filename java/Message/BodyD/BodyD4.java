@@ -7,6 +7,7 @@ public class BodyD4 extends MessageBody {
     String IDc;
     String text;
     BodyD4(String IDgame,String IDc,String text){
+        super(0xd4);
         this.IDgame = IDgame;
         this.IDc = IDc;
         this.text = text;

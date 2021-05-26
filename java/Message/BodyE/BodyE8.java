@@ -12,6 +12,7 @@ public class BodyE8 extends MessageBody {
     ArrayList<Integer> cardInformation;
 
     BodyE8(String gameID,String roomID,String clientID,ArrayList<Integer> cardInformation){
+        super(0xe8);
         this.gameID = gameID;
         this.roomID = roomID;
         this.cardInformation = cardInformation;

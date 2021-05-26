@@ -6,6 +6,7 @@ public class BodyE17 extends MessageBody {
     String clientID;//发送者的ID
     int voiceID;
     BodyE17(String clientID,int voiceID){
+        super(0xe17);
         this.clientID = clientID;
         this.voiceID = voiceID;
     }

@@ -7,6 +7,7 @@ public class BodyE18 extends MessageBody {
     String roomID;
     String clientID;//退出者的ID
     BodyE18(String gameID,String roomID,String clientID){
+        super(0xe18);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

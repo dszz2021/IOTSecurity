@@ -6,6 +6,7 @@ public class BodyD7 extends MessageBody {
     String IDgame;
     String IDroom;
     BodyD7(String idGame,String idRoom){
+        super(0xd7);
         this.IDgame = idGame;
         this.IDroom = idRoom;
     }

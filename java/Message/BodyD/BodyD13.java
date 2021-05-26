@@ -7,6 +7,7 @@ public class BodyD13 extends MessageBody {
     String idGame;
     String idRoom;
     BodyD13(boolean createRoomSuccessful,String idGame,String idRoom){
+        super(0xd13);
         this.createRoomSuccessful = createRoomSuccessful;
         this.idGame = idGame;
         this.idRoom = idRoom;

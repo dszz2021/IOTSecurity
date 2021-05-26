@@ -8,6 +8,7 @@ public class BodyD12 extends MessageBody {
     String idGame;
     ArrayList<String> idRoom;
     BodyD12(String idGame,ArrayList<String> idRoom){
+        super(0xd12);
         this.idGame = idGame;
         this.idRoom = idRoom;
     }

@@ -43,6 +43,7 @@ public class BodyA2 extends MessageBody {
 
     }
     private BodyA2(BodyA2Builder builder){
+        super(0xa2);
         this.IDtgs = builder.IDtgs;
         this.Lifetime2 = builder.Lifetime2;
         this.TS2 = builder.TS2;

@@ -13,6 +13,7 @@ public class BodyE14 extends MessageBody {
     Map<String,Integer> cIDAndScore;// 房间的人和积分的变动对应表
     boolean spring;//是否是春天
     BodyE14(String gameID,String roomID,String clientID,Map<String,Integer> cIDAndScore,boolean spring){
+        super(0xe14);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

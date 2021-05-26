@@ -6,6 +6,7 @@ public class BodyD9 extends MessageBody {
     boolean changeSuccessful;
     String reason;
     BodyD9(boolean changeSuccessful){
+        super(0xd9);
         this.changeSuccessful = changeSuccessful;
         reason = "successful";
     }

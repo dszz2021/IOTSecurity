@@ -6,6 +6,7 @@ public class BodyD11 extends MessageBody {
     String idGame;
     String cName;
     BodyD11(String idGame,String cName){
+        super(0xd11);
         this.cName = cName;
         this.idGame = idGame;
     }

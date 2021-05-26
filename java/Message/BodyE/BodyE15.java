@@ -6,6 +6,7 @@ public class BodyE15 extends MessageBody {
     String clientID;
     String warn;
     BodyE15(String clientID){
+        super(0xe15);
         this.clientID = clientID;
         this.warn = "FBI Warning ! Somebody quit illegal";
     }

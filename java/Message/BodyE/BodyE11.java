@@ -9,6 +9,7 @@ public class BodyE11 extends MessageBody {
     boolean doubleness;//ture表示加倍，false表示不不加倍
     int multiple;
     BodyE11(String gameID,String roomID,String clientID,boolean doubleness,int multiple){
+        super(0xe11);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

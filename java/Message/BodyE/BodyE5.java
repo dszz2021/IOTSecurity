@@ -8,6 +8,7 @@ public class BodyE5 extends MessageBody {
     String clientID;
     int voiceID;
     BodyE5(String gameID,String roomID,String clientID,int voiceID){
+        super(0xe5);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

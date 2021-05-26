@@ -57,6 +57,7 @@ public class BodyE13 extends MessageBody {
 
     }
     BodyE13(BodyE13Builder builder){
+        super(0xe13);
         this.cardInformation = builder.cardInformation;
         this.cardType = builder.cardType;
         this.clientID = builder.clientID;

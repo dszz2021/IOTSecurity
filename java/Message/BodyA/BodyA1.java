@@ -7,6 +7,7 @@ public class BodyA1 extends MessageBody {
     String IDtgs;
     String TS1;
     public BodyA1(String IDc,String IDtgs,String TS1){
+        super(0xa1);
         this.IDc = IDc;
         this.IDtgs = IDtgs;
         this.TS1 = TS1;

@@ -7,6 +7,7 @@ public class BodyD8 extends MessageBody {
     String cName;
     String score;
     BodyD8(boolean loadSuccessful,String name,String score){
+        super(0xd8);
         this.loadSuccessful = loadSuccessful;
         this.cName = name;
         this.score = score;

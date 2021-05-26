@@ -7,6 +7,7 @@ public class BodyE12 extends MessageBody {
     String roomID;
     String clientID;//出牌人的ID
     BodyE12(String gameID,String roomID,String clientID){
+        super(0xe12);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

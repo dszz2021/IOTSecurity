@@ -48,6 +48,7 @@ public class BodyE4 extends MessageBody {
     }
 
     BodyE4(BodyE4Builder builder){
+        super(0xe4);
         this.gameID = builder.gameID;
         this.roomID = builder.roomID;
         this.clientID = builder.clientID;

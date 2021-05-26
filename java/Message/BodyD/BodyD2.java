@@ -6,6 +6,7 @@ public class BodyD2 extends MessageBody {
     String IDc;
     String cName;//修改后的名字
     public BodyD2(String IDc,String name){
+        super(0xd2);
         this.IDc = IDc;
         this.cName = name;
     }

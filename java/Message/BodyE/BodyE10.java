@@ -8,6 +8,7 @@ public class BodyE10 extends MessageBody {
     String clientID;//地主的ID
     int multiple;//当前倍数
     BodyE10(String gameID,String roomID,String clientID,int multiple){
+        super(0xe10);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

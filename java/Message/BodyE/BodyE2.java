@@ -8,6 +8,7 @@ public class BodyE2 extends MessageBody {
     String clientID;
     boolean chase;//ture表示抢地主，false表示不抢地主
     BodyE2(String gameID,String roomID,String clientID,boolean chase){
+        super(0xe2);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

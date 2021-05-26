@@ -9,6 +9,7 @@ public class BodyE9 extends MessageBody {
     boolean chase;//ture表示抢地主，false表示不抢地主
     int multiple;//当前倍数
     BodyE9(String gameID,String roomID,String clientID,boolean chase,int multiple){
+        super(0xe9);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;

@@ -8,6 +8,7 @@ public class BodyE7 extends MessageBody {
     String clientID;
     boolean ready;//ture表示准备，false表示不准备
     BodyE7(String gameID,String roomID,String clientID,boolean ready){
+        super(0xe7);
         this.gameID = gameID;
         this.roomID = roomID;
         this.clientID = clientID;
