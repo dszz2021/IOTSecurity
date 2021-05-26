@@ -1,11 +1,12 @@
 package Server;
 
 
-import Message.BodyE.BodyE1;
+import Message.BodyE.*;
 import Message.Message;
 import Message.MessageBody;
 
 import java.nio.channels.Channel;
+import java.util.ArrayList;
 import java.util.Map;
 
 enum state{
@@ -28,31 +29,79 @@ public class Room {
 
     MessageBody info;
     state Gamestate=state.GameEntry;
-    public Message GamePreparation(MessageBody mes){
+
+    /**
+     *              准备状态的操作
+     * @param bodyE1
+     * @return
+     */
+    public ArrayList<Message> GamePreparation(BodyE1 bodyE1){
         if(Gamestate==state.GameEntry)
             count=0;
-
-        return null;
-
-    }
-    public Message GameStart(MessageBody mes){
-
-
         return null;
     }
-    public Message GetCards(MessageBody mes){
 
-        return null;
-    }
-    public Message ChaseForLandlord(MessageBody mes){
+    /**
+     *              三个人都准备后进入游戏开始发牌
+     * @return
+     */
+    private Message GameStart(){
+
 
         return null;
     }
-    public Message Double(MessageBody mes){
+
+    /**
+     *             发牌
+     * @return
+     */
+    private Message GetCards(){
 
         return null;
     }
-    public Message CheckCardsCounts(MessageBody mes){
+
+    /**
+     *             抢地主
+     * @param bodyE2
+     * @return
+     */
+    public Message ChaseForLandlord(BodyE2 bodyE2){
+
+        return null;
+    }
+
+    /**
+     *             加倍
+     * @param bodyE3
+     * @return
+     */
+    public Message Double(BodyE3 bodyE3){
+
+        return null;
+    }
+
+    /**
+     *            出牌  并记录是否有牌
+     * @param bodyE4
+     * @return
+     */
+    public Message CheckCardsCounts(BodyE4 bodyE4){
+        return null;
+    }
+
+    public Message chat(BodyE18 bodyE18){
+
+        return null;
+    }
+
+    //游戏中途退出
+    public Message quitInGame(BodyE6 bodyE6){
+
+        return null;
+    }
+
+    public Message quitBeforeGame(BodyE18 bodyE18){
+
         return null;
     }
     private void GameState(){
