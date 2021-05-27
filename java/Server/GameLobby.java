@@ -1,6 +1,8 @@
 package Server;
 
 import DES.DES;
+import Message.BodyA.TicketV;
+import Message.BodyB.Authenticator;
 import Message.BodyC.BodyC1;
 import Message.BodyC.BodyC2;
 import Message.BodyD.*;
@@ -60,18 +62,27 @@ public class GameLobby {
     //服务器认证
     //返回值为加密后的C2报文（不需要报头和报尾）
     public ArrayList<String> authenticator(BodyC1 bodyC1){
-        String keyCV="";
-        String clientID="";
+        
+        String KeyV = "";//查找TGS和Server的共享密钥KeyV
+        String EncodeTicketV = des.deCipher(bodyC1.getTicketV(),KeyV);//先用DES解密成Json封装的字符串
+        TicketV tickeV = gson.fromJson(EncodeTicketV, TicketV.class);
+
+        //将Authenticator解密再解封装
+        String EncodeAuthenticator = des.deCipher(bodyC1.getAuthenticator(), tickeV.getKeyCAndV());
+        Authenticator authenticator = gson.fromJson(EncodeAuthenticator,Authenticator.class);
+
+        String keyCV = tickeV.getKeyCAndV();
+        String clientID = tickeV.getIDc();
         /**
          * 认证
          */
 
         ArrayList<String> stringArrayList = new ArrayList<>();
-        BodyC2 bodyC2 = new BodyC2("1");
+        BodyC2 bodyC2 = new BodyC2(authenticator.getTS3()+1);
         String jsonC2 = gson.toJson(bodyC2);
         Message messageC2 = new Message(0xc,0x2,jsonC2);
-        String jsonMess= gson.toJson(messageC2);
-        String cipher = des.cipher(jsonMess,keyCV);
+        String jsonMessage= gson.toJson(messageC2);
+        String cipher = des.cipher(jsonMessage,keyCV);
 
         stringArrayList.add(cipher);
         stringArrayList.add(clientID);
