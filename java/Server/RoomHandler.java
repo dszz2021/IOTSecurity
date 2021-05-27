@@ -31,10 +31,10 @@ public class RoomHandler extends  SimpleChannelInboundHandler<String>{
         if(message1.getHead().getThickType()==0xD){
             switch (message1.getHead().getThinType()){
                 case 1->{
-                     //DES加密后发送给该发送者
+                    //DES加密后发送给该发送者
                 }
                 case 2->{
-                  //Des 加密后发送给该发送者
+                    //Des 加密后发送给该发送者
                 }
                 case 3->{
 

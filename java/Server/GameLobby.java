@@ -48,7 +48,7 @@ public class GameLobby {
     }
     private void getGameName(){
         /**
-         * 从数据库中将游戏ID和游戏名提取出来
+         * 从数据库中将游戏ID和游戏名提取出来,放在gameIDAndName中
          */
         gameIDAndName.put("1","J斗地主J");
     }
@@ -76,7 +76,8 @@ public class GameLobby {
         stringArrayList.add(cipher);
         stringArrayList.add(clientID);
 
-        //这个函数处理之后将sessionKey存储在clientAndSessionKey中
+        clientAndSessionKey.put(clientID,keyCV);
+
         return stringArrayList;
     }
 
@@ -172,9 +173,11 @@ public class GameLobby {
 
 
     public Message chat(BodyD6 bodyD6){
-
-
-        return null;
+        String name = idAndName.get(bodyD6.getIDc());
+        BodyD16 bodyD16 = new BodyD16(name,bodyD6.getText());
+        String bd16 = gson.toJson(bodyD16);
+        Message message = new Message(0xd,0x16,bd16);
+        return message;
     }
 
     //通过Id得到玩家昵称

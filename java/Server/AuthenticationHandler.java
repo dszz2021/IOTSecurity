@@ -1,8 +1,10 @@
 package Server;
 
-import Message.BodyB.BodyB1;
+
+import Message.BodyA.BodyA1;
 import Message.BodyC.BodyC1;
 import Message.Message;
+import Message.MessageBody;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +25,7 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<String> {
         }else {
             BodyC1 bodyC1 = gson.fromJson(message1.getBody(), BodyC1.class);
             /*
-            调用Server认证部分的函数(小猪)
+            调用Server认证部分的函数
             输入: bodyC1
             输出： 一段加密后的json字符串密文 ccc
             ArrayList<String> sc = gameLobby.authenticator(bodyC1);
@@ -32,6 +34,8 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<String> {
             String back = gson.toJson(messageBack);
             channel.writeAndFlush(json)
             */
+            ctx.fireChannelRead("clientID:" + "client的id");
+
         }
 
     }
