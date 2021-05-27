@@ -266,7 +266,7 @@ public class DES {
      * 参数keys作为密钥
      * 参数plainText是需要加密的明文（64位的字节）
      */
-    public String DESCipher(String keys,String plainText){
+    private String DESCipher(String keys,String plainText){
         String cipherText="";
         cipherText = IPDisplace(plainText);
         Key key = new Key(keys);
@@ -294,7 +294,7 @@ public class DES {
      * @param cipherText    密文
      * @return              返回值是明文二进制字符串
      */
-    public String DESDecipher(String keys,String cipherText){
+    private String DESDecipher(String keys,String cipherText){
         String plainText="";
         plainText = IPDisplace(cipherText);
         Key key = new Key(keys);
@@ -322,20 +322,66 @@ public class DES {
 
         return cipherText;
     }
+
+    public String cipher(String text,String key){
+        String text1 =text;
+        StringByte stringByte = new StringByte();
+        ArrayList<String> plainText = stringByte.StringToBinary(text);
+        ArrayList<String> cipherText = new ArrayList<>();
+
+        String key1 = key;
+
+        Iterator<String> iterator1 = plainText.iterator();
+        while (iterator1.hasNext()) {
+            String aaa = iterator1.next();
+            cipherText.add(this.DESCipher(key, aaa));
+        }
+        String cipher = stringByte.BinaryToString(cipherText);
+        //System.out.println("加密完成 密文："+stringByte.BinaryToString(cipherText));
+        return stringByte.BinaryToString(cipherText);
+
+
+    }
+
+    public String deCipher(String text,String key){
+        StringByte stringByte = new StringByte();
+        ArrayList<String> cipherText1 = new ArrayList<>();
+        cipherText1 = stringByte.StringToBinary(text);
+        Iterator<String> iterator2 = cipherText1.iterator();
+        ArrayList<String> test = new ArrayList<>();
+        while (iterator2.hasNext()) {
+            String aaa = iterator2.next();
+            test.add(this.DESDecipher(key, aaa));
+        }
+        //System.out.println("解密完成 明文："+stringByte.BinaryToString(test));
+        return stringByte.BinaryToString(test);
+    }
+
     public static void main(String[] args) {
         try {
+            DES des= new DES();
+            String cipher = des.cipher("这个参数放明文字符串","密钥");
+            System.out.println(cipher);
+            String deciper = des.DESDecipher(cipher,"密钥");
+            System.out.println(deciper);
 
+
+/*
             DES des = new DES();
             String key;
             Scanner scanner = new Scanner(System.in);
             //Pattern pattern = Pattern.compile("[a-f][0-9]+");
             System.out.println("输入发送的信息");
             String text = scanner.next();
+
+
             StringByte stringByte = new StringByte();
             ArrayList<String> plainText = stringByte.StringToBinary(text);
             ArrayList<String> cipherText = new ArrayList<>();
+
             System.out.println("输入密钥");
             key = scanner.next();
+
             Iterator<String> iterator1 = plainText.iterator();
             while (iterator1.hasNext()) {
                 String aaa = iterator1.next();
@@ -343,6 +389,8 @@ public class DES {
             }
             String cipher = stringByte.BinaryToString(cipherText);
             System.out.println("加密完成 密文："+stringByte.BinaryToString(cipherText));
+
+
             System.out.println("开始解密");
 
             ArrayList<String> cipherText1 = new ArrayList<>();
@@ -353,7 +401,7 @@ public class DES {
                 String aaa = iterator2.next();
                 test.add(des.DESDecipher(key, aaa));
             }
-            System.out.println("解密完成 明文："+stringByte.BinaryToString(test));
+            System.out.println("解密完成 明文："+stringByte.BinaryToString(test));*/
         }catch (Exception e){
             e.getMessage();
         }
