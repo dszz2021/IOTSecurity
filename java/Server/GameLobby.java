@@ -62,7 +62,6 @@ public class GameLobby {
     //服务器认证
     //返回值为加密后的C2报文（不需要报头和报尾）
     public ArrayList<String> authenticator(BodyC1 bodyC1){
-        
         String KeyV = "";//查找TGS和Server的共享密钥KeyV
         String EncodeTicketV = des.deCipher(bodyC1.getTicketV(),KeyV);//先用DES解密成Json封装的字符串
         TicketV tickeV = gson.fromJson(EncodeTicketV, TicketV.class);
