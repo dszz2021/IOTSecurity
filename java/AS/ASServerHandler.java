@@ -33,6 +33,7 @@ public class ASServerHandler extends SimpleChannelInboundHandler<String>{
                 ch.writeAndFlush(" 【自己】"+msg +" \n");
             }
         });*/
+        System.out.println(msg);
 
         Channel channel = ctx.channel();
         Gson gson = new Gson();
@@ -42,19 +43,20 @@ public class ASServerHandler extends SimpleChannelInboundHandler<String>{
             生成相应错误码的报文，并发回。
             */
         }else {
-            BodyA1 bodyA1 = gson.fromJson(message1.getBody(),BodyA1.class);
 
             /*
             调用AS认证部分的函数（苏方）(该函数考虑并发线程安全)
             输入: bodyA1
-            输出： 一段json字符串 aaa。
+            输出： 一段json字符串 aaa。*/
+            BodyA1 bodyA1 = gson.fromJson(message1.getBody(),BodyA1.class);
+            AsIdentify Identify = new AsIdentify();
+            String messageBack = Identify.AsDoIdentify(bodyA1);
 
-            Message messageBack = new (Message0xa,2,aaa)
 
-            String back = gson.toJson(messageBack);
 
-            channel.writeAndFlush(json)
-            */
+
+            channel.writeAndFlush(messageBack+"\n");
+
         }
 
     }

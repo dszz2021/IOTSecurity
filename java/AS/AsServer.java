@@ -31,11 +31,12 @@ public class AsServer {
                             pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
                             pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
                             pipeline.addLast(new ASServerHandler());
+                            System.out.println("333");
 
                         }
                     });
 
-            ChannelFuture channelFuture = serverBootstrap.bind(8899).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(8080).sync();
             channelFuture.channel().closeFuture().sync();
         }finally {
             bossGroup.shutdownGracefully();

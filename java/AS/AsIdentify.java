@@ -21,7 +21,7 @@ public class AsIdentify {
         String idc = bodyA1.getIDc();
         String idtgs = bodyA1.getIDtgs();
         String ts1 = bodyA1.getTS1();
-        String KeyC = "";//查找用户的密码KeyC，即每一个Client和AS服务器的共享密钥
+        String KeyC = "123";//查找用户的密码KeyC，即每一个Client和AS服务器的共享密钥
 
         Gson jsonR = new Gson();
         DES des1 = new DES();

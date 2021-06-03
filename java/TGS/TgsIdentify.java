@@ -19,7 +19,7 @@ public class TgsIdentify {
 
     public String TgsDoIdentify(BodyB1 bodyB1){
         DES des1 = new DES();
-        String KeyV = "";//查找TGS与Server的共享密钥KeyV
+        String KeyV = "123";//查找TGS与Server的共享密钥KeyV
         String idv = bodyB1.getIDv();
 
         //将被json封装的TicketTgs字符串重新转为TicketTgs类型
