@@ -1,5 +1,6 @@
 package AS;
 
+
 import DES.DES;
 import Message.BodyA.BodyA1;
 import Message.BodyA.BodyA2;
@@ -7,6 +8,8 @@ import Message.BodyA.TicketTGS;
 import Message.ErrorInfo.Body71;
 import Message.ErrorInfo.Body72;
 import Message.Message;
+import com.google.gson.Gson;
+
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
@@ -25,17 +28,17 @@ public class AsIdentify {
 
         if(idc!="") {//IDc查找失败，返回错误码0x71
             Body71 body71 = new Body71();
-            String error71 = gson.toJson(body71);
+            String error71 = jsonR.toJson(body71);
             Message messageError71 = new Message(0x7,0x1,error71);
-            String replyError71 = gson.toJson(messageError71);
+            String replyError71 = jsonR.toJson(messageError71);
             String EncodeReplyError71 = des1.cipher(replyError71,KeyC);
             return EncodeReplyError71;
         }
         if(idtgs!=""){//IDtgs查找失败，返回错误码0x72
             Body72 body72 = new Body72();
-            String error72 = gson.toJson(body72);
+            String error72 = jsonR.toJson(body72);
             Message messageError72 = new Message(0x7,0x2,error72);
-            String replyError72 = gson.toJson(messageError72);
+            String replyError72 = jsonR.toJson(messageError72);
             String EncodeReplyError72 = des1.cipher(replyError72,KeyC);
             return EncodeReplyError72;
         }
@@ -44,7 +47,7 @@ public class AsIdentify {
             BodyA2 reply = AsDoReply(ticketTGS,bodyA1);
             String bodyJson = jsonR.toJson(reply);
             Message message = new Message(0xa,0x2,bodyJson);
-            String replyMessage  = gson.toJson(message);
+            String replyMessage  = jsonR.toJson(message);
             String EncodeReply = des1.cipher(replyMessage, KeyC);
             return EncodeReply;
         }
@@ -76,7 +79,7 @@ public class AsIdentify {
         String KeyTGS = "";//查找AS和TGS共享密钥KeyTGS
         String EncodeTicketTGS = des.cipher(jsonticket,KeyTGS);//将封装完毕的String加密
 
-        BodyA2 bodyA2 = new BodyA2.Builder().KeyCandTgs(ticketTGS.getKeyCAndTgs()).IDtgs(bodyA1.getIDtgs()).TS2(ticketTGS.getTS2()).Lifetime2(ticketTGS.getLifetime2()).TicketTgs(EncodeTicketTGS).build();
+        BodyA2 bodyA2 = new BodyA2.BodyA2Builder().KeyCandTgs(ticketTGS.getKeyCAndTgs()).IDtgs(bodyA1.getIDtgs()).TS2(ticketTGS.getTS2()).Lifetime2(ticketTGS.getLifetime2()).TicketTgs(EncodeTicketTGS).build();
         return bodyA2;
     }
 
