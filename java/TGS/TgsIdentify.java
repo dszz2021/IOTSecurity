@@ -9,6 +9,7 @@ import Message.BodyB.BodyB2;
 import Message.ErrorInfo.Body81;
 import Message.ErrorInfo.Body82;
 import Message.Message;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,7 +19,7 @@ public class TgsIdentify {
 
     public String TgsDoIdentify(BodyB1 bodyB1){
         DES des1 = new DES();
-        String KeyV = "";//查找TGS与Server的共享密钥KeyV
+        String KeyV = "123";//查找TGS与Server的共享密钥KeyV
         String idv = bodyB1.getIDv();
 
         //将被json封装的TicketTgs字符串重新转为TicketTgs类型
@@ -40,28 +41,28 @@ public class TgsIdentify {
 
         if(idv!="") { //IDv查找失败，返回错误码0x81
             Body81 body81 = new Body81();
-            String error81 = gson.toJson(body81);
+            String error81 = jsonR.toJson(body81);
             Message messageError81 = new Message(0x8,0x1,error81);
-            String replyError1 = gson.toJson(messageError1);
+            String replyError1 = jsonR.toJson(messageError81);
             String EncodeReplyError81 = des1.cipher(replyError1,KeyV);
             return EncodeReplyError81;
         }
         if(currentHour>effectiveHour){//AS提供的Ticket过期，返回错误码0x82
             Body82 body82 = new Body82();
-            String error82 = gson.toJson(body82);
+            String error82 = jsonR.toJson(body82);
             Message messageError82 = new Message(0x8,0x2,error82);
-            String replyError82 = gson.toJson(messageError82);
+            String replyError82 = jsonR.toJson(messageError82);
             String EncodeReplyError82 = des1.cipher(replyError82,KeyV);
             return EncodeReplyError82;
         }
         else{
             TicketV ticketV = CreateTicket(bodyB1,ticketTGS);
-            BodyB2 reply = TgsDoReply(ticketV);
-            String bodyJson = jsonR.toJson(reply);
-            Message message = new Message(0xb,0x2,bodyJson);
-            String replyMessage  = gson.toJson(message);
-            String EncodeReply = des1.cipher(replyMessage, KeyV);
-            return EncodeReply;
+            BodyB2 reply = TgsDoReply(ticketV);//获取BodyB2
+            String bodyJson = jsonR.toJson(reply);//将获取的BodyB2转为String
+            String EncodeBody = des1.cipher(bodyJson,KeyV);//将转为String的BodyB2加密
+            Message message = new Message(0xb,0x2,EncodeBody);//将加密后的BodyB2封装成Message
+            String replyMessage  = jsonR.toJson(message);////将Message封装为String
+            return replyMessage;
         }
 
 
@@ -71,13 +72,19 @@ public class TgsIdentify {
         String idv = bodyB1.getIDv();
 
 
-        String KeyCV;
+        String KeyCV = "";
         //查找数据库并存入KeyC&V
 
         Date dd = new Date();
         SimpleDateFormat df = new SimpleDateFormat("MM-dd-HH:mm");
         String time4 = df.format(dd);
-        TicketV ticketV = new TicketV.TicketVBuilder().KeyCAndV(KeyCV).IDc(ticketTGS.getIDc()).ADc(ticketTGS.getADc()).IDv(bodyB1.getIDv()).TS4(time4).Lifetime4("3").build();
+        TicketV ticketV = new TicketV.TicketVBuilder().
+                KeyCAndV(KeyCV).IDc(ticketTGS.getIDc()).
+                adc(ticketTGS.getADc()).
+                IDv(bodyB1.getIDv()).
+                TS4(time4).
+                Lifetime4("3").
+                build();
 
         return ticketV;
 

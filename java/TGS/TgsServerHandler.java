@@ -34,12 +34,12 @@ public class TgsServerHandler extends SimpleChannelInboundHandler<String>{
             /*
             调用TGS认证部分的函数（苏方）
             输入: bodyB1
-            输出： 一段加密后的json字符串密文 bbb。
+            输出： 一段加密后的json字符串密文 bbb。*/
+            TgsIdentify identify = new TgsIdentify();
+            String messageback = identify.TgsDoIdentify(bodyB1);
 
-            Message messageBack = new Message(0xb,2,bbb)
-            String back = gson.toJson(messageBack);
-            channel.writeAndFlush(json)
-            */
+            channel.writeAndFlush(messageback);
+
         }
 
     }

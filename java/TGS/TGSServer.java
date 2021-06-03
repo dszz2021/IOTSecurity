@@ -1,5 +1,6 @@
 package TGS;
 
+import AS.AsServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -45,7 +46,8 @@ public class TGSServer {
     }
 
     public static void main(String[] args) throws Exception {
-
+        int port = 8080;
+        new AsServer().bind(port);
     }
 
 }
