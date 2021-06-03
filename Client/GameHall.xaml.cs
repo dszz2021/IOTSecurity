@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace WpfApp1
 {
@@ -7,9 +9,14 @@ namespace WpfApp1
     /// </summary>
     public partial class Window2 : Window
     {
+        static int NumOfPic { set; get; }
         public Window2()
         {
             InitializeComponent();
+        }
+        public void SetNumOfPic(int num)
+        {
+            NumOfPic = num;
         }
         //创建房间按钮
         private void Button_SetUp_Click(object sender, RoutedEventArgs e)
@@ -42,40 +49,32 @@ namespace WpfApp1
              * 此时输入要修改的昵称，然后点击"确定"按钮即可修改昵称
              * 确定后修改按钮文本Text -> “修改”
              */
-            if(modify.Content.Equals("修改"))
+            if (modify.Content.Equals("修改"))
             {
                 modify.Content = "确定";
-                nickname.IsEnabled = true;
+                nickName.IsEnabled = true;
             }
             else
             {
                 modify.Content = "修改";
-                nickname.IsEnabled = false;
+                nickName.IsEnabled = false;
             }
         }
 
         //发送信息按钮
         private void Button_Send_Click(object sender, RoutedEventArgs e)
         {
+            string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             //获取发送框中的内容
-            string str = "";
-            //将个人发言发送到服务器
-            Send_Server(str);
-        }
-        //发送个人发言信息到服务器
-        private bool Send_Server(string str)
-        {
-            return true;
-        }
-
-        //接收服务器发来的信息
-        private void Receive_Server()
-        {
-            //如果 接收到公共频道信息
-            string str = "";
-            Public_Channel(str);
-            // 接收到其它信息...
-
+            string str = "[" + time + "]" + nickName.Text + "：" + sendMes.Text + "\r\n";
+            if (!sendMes.Text.Equals(""))
+            {
+                //将个人发言发送到服务器
+                Public_Channel(str);
+            }
+            //滚动到光标处
+            publicChannel.ScrollToEnd();
+            sendMes.Text = null;
         }
 
         /*
@@ -84,35 +83,91 @@ namespace WpfApp1
          */
         private void Public_Channel(string str)
         {
-            //公共频道当前信息 += str;
+            publicChannel.Text += str;
         }
 
         //窗体加载事件（窗口生成时加载）
         private void GameHallLoad(object sender, RoutedEventArgs e)
         {
-            //连接数据库
-            /*
-             * 加载个人ID和昵称:TextBox
-             * 加载游戏列表:ListView
-             * 加载大厅在线用户:ListView
-             */
+            //初始化个人信息
+            NumOfPic = 5;
+            string path = "\\Resources\\Head\\" + NumOfPic + ".jpg";
+            headPicture.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+            account.Text = "1131684544";
+            nickName.Text = "Gouzia-";
+            happyBeen.Text = "9999999";
+
+            //初始化游戏列表
+            gameLV.Items.Add(new { gameName = "DSZZ斗地主" });
+            gameLV.Items.Add(new { gameName = "DSZZ跑得快" });
+
+            //初始化大厅用户列表
+            numOfPeople.Text = 2.ToString();
+            userLV.Items.Add(new { userName = "Gouzia-" });
+            userLV.Items.Add(new { userName = "J" });
         }
         //房间信息加载（ListView选中行改变时加载）
         private void RoomLoad(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            //连接数据库
-            //获取选中行的文本Text（游戏ID）
-            //数据库中查找
-            //加载房间ListView
+            roomDetail.Text = null;
+            roomLV.Items.Clear();
+            if (gameLV.SelectedItem.ToString().Equals("{ gameName = DSZZ斗地主 }"))
+            {
+                roomLV.Items.Add(new RoomMessage("二缺一！快来一起战斗！", 2, "准备"));
+                roomLV.Items.Add(new RoomMessage("战斗即刻开始！", 3, "开始"));
+            }
 
         }
         //详细房间信息加载（ListView选中行改变时加载）
         private void RoomDetail(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            //连接数据库
-            //获取选中行的文本Text（房间ID）
-            //数据库中查找
-            //加载详细信息ListView
+            roomDetail.Text = null;
+            if (roomLV.SelectedItem is RoomMessage RM && RM is RoomMessage)
+            {
+                string roomName = RM.RoomName;
+                int roomNum = RM.RoomNum;
+                string roomState = RM.RoomState;
+                roomDetail.Text +=
+                    "房间名称：" + roomName + "\r\n"
+                    + "当前人数：" + roomNum + "\r\n"
+                    + "当前房间状态：" + roomState + "\r\n";
+            }
+        }
+
+        //回车键发送个人信息
+        private void GameHall_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            object sender1 = new object();
+            RoutedEventArgs e1 = new RoutedEventArgs();
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                if (modify.Content.Equals("确定"))
+                    Button_Modify_Click(sender1, e1);
+                else if (sendMes.Focus())
+                    Button_Send_Click(sender1, e1);
+            }
+        }
+
+        //头像更改事件
+        private void ChangeHead(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Window CH = new HeadPicture(this);
+            CH.ShowDialog();
+            string path = "\\Resources\\Head\\" + NumOfPic + ".jpg";
+            headPicture.Source = new BitmapImage(new Uri(path, UriKind.Relative));
+        }
+    }
+    class RoomMessage
+    {
+        public string RoomName { set; get; }
+        public int RoomNum { set; get; }
+        public string RoomState { set; get; }
+
+        public RoomMessage(string Name, int Num, string State)
+        {
+            RoomName = Name;
+            RoomNum = Num;
+            RoomState = State;
         }
     }
 }

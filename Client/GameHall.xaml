@@ -4,30 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="游戏大厅" Height="450" MinHeight="450" MaxHeight="450" Width="800" MinWidth="800" MaxWidth="800" Loaded="GameHallLoad" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="游戏大厅" Height="450" MinHeight="450" MaxHeight="450" Width="800" MinWidth="800" MaxWidth="800" Loaded="GameHallLoad" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" KeyDown="GameHall_KeyDown">
+    <Window.Resources>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <ListView HorizontalAlignment="Left" Height="223" Margin="162,10,0,0" VerticalAlignment="Top" Width="427" SelectionChanged="RoomDetail">
+        <ListView x:Name="gameLV" HorizontalAlignment="Left" Height="177" Margin="5,233,0,0" ItemContainerStyle="{StaticResource ListViewItemStyle}" VerticalAlignment="Top" Width="152" SelectionChanged="RoomLoad">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="游戏名称" Width="142"  DisplayMemberBinding="{Binding gameName}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView HorizontalAlignment="Left" Height="177" Margin="5,233,0,0" VerticalAlignment="Top" Width="152" SelectionChanged="RoomLoad">
+        <ListView x:Name="roomLV" HorizontalAlignment="Left" Height="223" Margin="162,10,0,0" ItemContainerStyle="{StaticResource ListViewItemStyle}" VerticalAlignment="Top" Width="427" SelectionChanged="RoomDetail">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="房间名称" Width="180" DisplayMemberBinding="{Binding RoomName}"/>
+                    <GridViewColumn Header="当前人数" Width="100" DisplayMemberBinding="{Binding RoomNum}"/>
+                    <GridViewColumn Header="房间状态" Width="135" DisplayMemberBinding="{Binding RoomState}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView HorizontalAlignment="Left" Height="144" Margin="594,261,0,0" VerticalAlignment="Top" Width="190">
+        <ListView x:Name="userLV" HorizontalAlignment="Left" Height="144" Margin="594,261,0,0" ItemContainerStyle="{StaticResource ListViewItemStyle}" VerticalAlignment="Top" Width="190">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="用户昵称" Width="180" DisplayMemberBinding="{Binding userName}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Image HorizontalAlignment="Left" Height="101" Margin="10,10,0,0" VerticalAlignment="Top" Width="147"/>
+        <Image x:Name="headPicture" HorizontalAlignment="Left" Height="100" Margin="20,10,0,0" VerticalAlignment="Top" Width="120" Stretch="Fill" MouseDown="ChangeHead"/>
 
         <Button Content="加入房间" HorizontalAlignment="Left" Margin="497,238,0,0" VerticalAlignment="Top" Width="75" Click="Button_Join_Click"/>
         <Button Content="创建房间" HorizontalAlignment="Left" Margin="393,238,0,0" VerticalAlignment="Top" Width="75" Click="Button_SetUp_Click"/>
@@ -35,23 +42,22 @@
         <Button x:Name="modify" Content="修改" HorizontalAlignment="Left" Margin="40,210,0,0" VerticalAlignment="Top" Width="75" Click="Button_Modify_Click"/>
 
         <TextBox x:Name="account" HorizontalAlignment="Left" Height="24" Margin="52,116,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" IsEnabled="False" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="nickname" HorizontalAlignment="Left" Height="24" Margin="52,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" IsEnabled="False" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="happybeen" HorizontalAlignment="Left" Height="24" Margin="52,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" IsEnabled="False" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="Send" HorizontalAlignment="Left" Height="23" Margin="212,385,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="297" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="publicChannel" HorizontalAlignment="Left" Height="116" Margin="162,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="427" IsEnabled="False"/>
-        <TextBox x:Name="numOfPeople" HorizontalAlignment="Left" Height="18" Margin="722,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="39" IsEnabled="False" VerticalContentAlignment="Center"/>
-        <TextBox HorizontalAlignment="Left" Height="17" Margin="594,10,0,0" TextWrapping="Wrap" Text="房间详细信息" VerticalAlignment="Top" Width="190" IsEnabled="False"/>
-        <TextBox HorizontalAlignment="Left" Height="206" Margin="594,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190" IsEnabled="False"/>
+        <TextBox x:Name="nickName" HorizontalAlignment="Left" Height="24" Margin="52,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" IsEnabled="False" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="happyBeen" HorizontalAlignment="Left" Height="24" Margin="52,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" IsEnabled="False" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="sendMes" HorizontalAlignment="Left" Height="23" Margin="212,385,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="297" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="publicChannel" HorizontalAlignment="Left" Height="116" Margin="162,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="419" VerticalScrollBarVisibility="Visible" IsReadOnly="True"/>
+        <TextBox x:Name="numOfPeople" HorizontalAlignment="Left" Height="18" Margin="722,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="39" IsReadOnly="True" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <TextBox HorizontalAlignment="Left" Height="17" Margin="594,10,0,0" TextWrapping="Wrap" Text="房间详细信息" VerticalAlignment="Top" Width="190" IsEnabled="False" IsReadOnly="True"/>
+        <TextBox x:Name="roomDetail" HorizontalAlignment="Left" Height="206" Margin="594,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190" IsReadOnly="True" FontSize="13" />
 
-        <Label Content="" HorizontalAlignment="Left" Margin="4,170,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.448,2.089"/>
         <Label Content="发送栏" HorizontalAlignment="Left" Margin="162,382,0,0" VerticalAlignment="Top"/>
         <Label Content="公共频道" HorizontalAlignment="Left" Margin="162,235,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.08,0.203" Width="59"/>
+
         <Label Content="游戏大厅内在线用户共" HorizontalAlignment="Left" Margin="594,233,0,0" VerticalAlignment="Top" Height="28" Width="134"/>
         <Label Content="人" HorizontalAlignment="Left" Margin="761,233,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.156,0.598" Width="23" Height="28"/>
-        <Label Content="ID：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="19,116,0,0" Width="40"/>
+
+        <Label Content="ID：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,116,0,0" Width="40"/>
         <Label Content="昵称：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,144,0,0" Width="40"/>
-        <Label Content="豆子：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,173,0,0"  Width="40"/>
-
-
+        <Label Content="积分：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,173,0,0"  Width="40"/>
     </Grid>
 </Window>

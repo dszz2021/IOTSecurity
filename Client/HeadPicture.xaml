@@ -1,0 +1,32 @@
+﻿<Window x:Class="WpfApp1.HeadPicture"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="HeadPicture" Height="320" MinHeight="320" MaxHeight="320" Width="300" MinWidth="300" MaxWidth="300" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0" Grid.Row="1" Source="Resources\Head\1.jpg" Margin="0,5" MouseDown="Pic1MouseDown"/>
+        <Image Grid.Column="1" Grid.Row="1" Source="Resources\Head\2.jpg" Margin="0,5" MouseDown="Pic2MouseDown"/>
+        <Image Grid.Column="2" Grid.Row="1" Source="Resources\Head\3.jpg" Margin="0,5" MouseDown="Pic3MouseDown"/>
+        <Image Grid.Column="0" Grid.Row="2" Source="Resources\Head\4.jpg" Margin="0,5" MouseDown="Pic4MouseDown"/>
+        <Image Grid.Column="1" Grid.Row="2" Source="Resources\Head\5.jpg" Margin="0,5" MouseDown="Pic5MouseDown"/>
+        <Image Grid.Column="2" Grid.Row="2" Source="Resources\Head\6.jpg" Margin="0,5" MouseDown="Pic6MouseDown"/>
+        <Image Grid.Column="0" Grid.Row="3" Source="Resources\Head\7.jpg" Margin="0,5" MouseDown="Pic7MouseDown"/>
+        <Image Grid.Column="1" Grid.Row="3" Source="Resources\Head\8.jpg" Margin="0,5" MouseDown="Pic8MouseDown"/>
+        <Image Grid.Column="2" Grid.Row="3" Source="Resources\Head\9.jpg" Margin="0,5" MouseDown="Pic9MouseDown"/>
+        <Label Content="鼠标双击即可更换头像" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+    </Grid>
+</Window>

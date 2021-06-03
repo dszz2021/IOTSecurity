@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="DSZZ" Height="240" MaxHeight="240" MinHeight="240" Width="450" MaxWidth="450" MinWidth="450" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="DSZZ" Height="240" MaxHeight="240" MinHeight="240" Width="450" MaxWidth="450" MinWidth="450" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" KeyDown="Enroll_KeyDown">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition/>

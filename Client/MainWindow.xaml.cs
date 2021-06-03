@@ -10,6 +10,7 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+            account.Focus();
         }
 
         // 0-允许登录；1-账号不存在；2-密码错误
@@ -73,6 +74,14 @@ namespace WpfApp1
         private IsEnoll Receive_Server()
         {
             return 0;
+        }
+
+        private void Enroll_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            object sender1 = new object();
+            RoutedEventArgs e1 = new RoutedEventArgs();
+            if (e.Key == System.Windows.Input.Key.Enter)
+                Button_enroll_Click(sender1, e1);
         }
     }
 }
