@@ -44,12 +44,12 @@ public class AsIdentify {
         }
         else{
             TicketTGS ticketTGS = CreateTicket(bodyA1);
-            BodyA2 reply = AsDoReply(ticketTGS,bodyA1);
-            String bodyJson = jsonR.toJson(reply);
-            Message message = new Message(0xa,0x2,bodyJson);
-            String replyMessage  = jsonR.toJson(message);
-            String EncodeReply = des1.cipher(replyMessage, KeyC);
-            return EncodeReply;
+            BodyA2 reply = AsDoReply(ticketTGS,bodyA1);//获取BodyA2
+            String bodyJson = jsonR.toJson(reply);//将获取的BodyA2转为String
+            String EncodeBody = des1.cipher(bodyJson,KeyC);//将转为String的BodyA2加密
+            Message message = new Message(0xa,0x2,EncodeBody);//将加密后的BodyA2封装成Message
+            String replyMessage  = jsonR.toJson(message);//将Message封装为String
+            return replyMessage;
         }
     }
 

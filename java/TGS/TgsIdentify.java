@@ -57,12 +57,12 @@ public class TgsIdentify {
         }
         else{
             TicketV ticketV = CreateTicket(bodyB1,ticketTGS);
-            BodyB2 reply = TgsDoReply(ticketV);
-            String bodyJson = jsonR.toJson(reply);
-            Message message = new Message(0xb,0x2,bodyJson);
-            String replyMessage  = jsonR.toJson(message);
-            String EncodeReply = des1.cipher(replyMessage, KeyV);
-            return EncodeReply;
+            BodyB2 reply = TgsDoReply(ticketV);//获取BodyB2
+            String bodyJson = jsonR.toJson(reply);//将获取的BodyB2转为String
+            String EncodeBody = des1.cipher(bodyJson,KeyV);//将转为String的BodyB2加密
+            Message message = new Message(0xb,0x2,EncodeBody);//将加密后的BodyB2封装成Message
+            String replyMessage  = jsonR.toJson(message);////将Message封装为String
+            return replyMessage;
         }
 
 
