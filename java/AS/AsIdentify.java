@@ -2,6 +2,7 @@ package AS;
 
 
 import DES.DES;
+import DataBase.AddDeleteCheckModify;
 import Message.BodyA.BodyA1;
 import Message.BodyA.BodyA2;
 import Message.BodyA.TicketTGS;
@@ -10,23 +11,28 @@ import Message.ErrorInfo.Body72;
 import Message.Message;
 import com.google.gson.Gson;
 
+import java.sql.DatabaseMetaData;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+import java.util.Random;
 
 
 public class AsIdentify {
 
     public String AsDoIdentify(BodyA1 bodyA1){
-        String idc = bodyA1.getIDc();
-        String idtgs = bodyA1.getIDtgs();
-        String ts1 = bodyA1.getTS1();
-        String KeyC = "123";//查找用户的密码KeyC，即每一个Client和AS服务器的共享密钥
 
         Gson jsonR = new Gson();
         DES des1 = new DES();
+        AddDeleteCheckModify mysql = new AddDeleteCheckModify();
 
-        if(idc!="") {//IDc查找失败，返回错误码0x71
+        String idc = bodyA1.getIDc();
+        String idtgs = bodyA1.getIDtgs();
+        String ts1 = bodyA1.getTS1();
+        String KeyC = mysql.CheckUserPwd(idc);//查找用户的密码KeyC，即每一个Client和AS服务器的共享密钥
+
+
+        if(mysql.CheckUserId(idc)) {//IDc查找失败，返回错误码0x71
             Body71 body71 = new Body71();
             String error71 = jsonR.toJson(body71);
             Message messageError71 = new Message(0x7,0x1,error71);
@@ -34,7 +40,7 @@ public class AsIdentify {
             String EncodeReplyError71 = des1.cipher(replyError71,KeyC);
             return EncodeReplyError71;
         }
-        if(idtgs!=""){//IDtgs查找失败，返回错误码0x72
+        if(mysql.CheckTgsId(idtgs)){//IDtgs查找失败，返回错误码0x72
             Body72 body72 = new Body72();
             String error72 = jsonR.toJson(body72);
             Message messageError72 = new Message(0x7,0x2,error72);
@@ -56,7 +62,7 @@ public class AsIdentify {
     public TicketTGS CreateTicket(BodyA1 bodyA1){
         String idc = bodyA1.getIDc();
         String idtgs = bodyA1.getIDtgs();
-        String KeyCTGS = "";//查找数据库
+        String KeyCTGS = CreateKeyCTGS(8);//AS生成一个C和TGS共享的密钥
         String adc = "";
 
         Date dd = new Date();
@@ -74,13 +80,25 @@ public class AsIdentify {
     {
         DES des = new DES();
         Gson json1 = new Gson();
+        AddDeleteCheckModify mysql1 = new AddDeleteCheckModify();
 
         String jsonticket = json1.toJson(ticketTGS);//将TicketTGS用Json封装成String
-        String KeyTGS = "";//查找AS和TGS共享密钥KeyTGS
+        String KeyTGS = mysql1.CheckKeyTGS(bodyA1.getIDtgs());//查找AS和TGS共享密钥KeyTGS
         String EncodeTicketTGS = des.cipher(jsonticket,KeyTGS);//将封装完毕的String加密
 
         BodyA2 bodyA2 = new BodyA2.BodyA2Builder().KeyCandTgs(ticketTGS.getKeyCAndTgs()).IDtgs(bodyA1.getIDtgs()).TS2(ticketTGS.getTS2()).Lifetime2(ticketTGS.getLifetime2()).TicketTgs(EncodeTicketTGS).build();
         return bodyA2;
+    }
+
+    public static String CreateKeyCTGS(int length){
+        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random=new Random();
+        StringBuffer sb=new StringBuffer();
+        for(int i=0;i<length;i++){
+            int number=random.nextInt(62);
+            sb.append(str.charAt(number));
+        }
+        return sb.toString();
     }
 
 }

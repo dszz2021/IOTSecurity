@@ -1,6 +1,7 @@
 package TGS;
 
 import DES.DES;
+import DataBase.AddDeleteCheckModify;
 import Message.BodyA.TicketTGS;
 import Message.BodyA.TicketV;
 import Message.BodyB.Authenticator;
@@ -14,13 +15,15 @@ import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 public class TgsIdentify {
 
     public String TgsDoIdentify(BodyB1 bodyB1){
         DES des1 = new DES();
-        String KeyV = "123";//查找TGS与Server的共享密钥KeyV
+        AddDeleteCheckModify mysql = new AddDeleteCheckModify();
         String idv = bodyB1.getIDv();
+        String KeyV = mysql.CheckKeyServer(idv);//查找TGS与Server的共享密钥KeyV
 
         //将被json封装的TicketTgs字符串重新转为TicketTgs类型
         String KeyTGS = "";//查找AS和TGS的共享密钥KeyTGS
@@ -39,7 +42,7 @@ public class TgsIdentify {
         int currentHour = cal.get(Calendar.HOUR_OF_DAY);//获取当前小时，存为int
 
 
-        if(idv!="") { //IDv查找失败，返回错误码0x81
+        if(mysql.CheckServerID(idv)) { //IDv查找失败，返回错误码0x81
             Body81 body81 = new Body81();
             String error81 = jsonR.toJson(body81);
             Message messageError81 = new Message(0x8,0x1,error81);
@@ -72,8 +75,8 @@ public class TgsIdentify {
         String idv = bodyB1.getIDv();
 
 
-        String KeyCV = "";
-        //查找数据库并存入KeyC&V
+        String KeyCV = CreateKeyCV(8);
+        //TGS随机生成一个Client和Server的共享密钥
 
         Date dd = new Date();
         SimpleDateFormat df = new SimpleDateFormat("MM-dd-HH:mm");
@@ -94,14 +97,26 @@ public class TgsIdentify {
     {
         Gson json1 = new Gson();
         DES des = new DES();
+        AddDeleteCheckModify mysql1 = new AddDeleteCheckModify();
 
         String ticket = json1.toJson(ticketV);//将TicketV用Json封装成String
-        String KeyV = "";//查找TGS和Server共享密钥KeyV
+        String KeyV = mysql1.CheckKeyServer(ticketV.getIDv());//查找TGS和Server共享密钥KeyV
         String EncodeTiketV = des.cipher(ticket,KeyV);//将封装完毕的String加密
 
 
         BodyB2 bodyB2 = new BodyB2(ticketV.getKeyCAndV(),ticketV.getIDv(),ticketV.getTS4(),EncodeTiketV);
         return bodyB2;
+    }
+
+    public static String CreateKeyCV(int length){
+        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random=new Random();
+        StringBuffer sb=new StringBuffer();
+        for(int i=0;i<length;i++){
+            int number=random.nextInt(62);
+            sb.append(str.charAt(number));
+        }
+        return sb.toString();
     }
 
 }
