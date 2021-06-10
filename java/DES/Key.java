@@ -30,7 +30,7 @@ public class Key {
         while (key56.length()<56){
             key56.append(Integer.toBinaryString(keyChar[num]));
             num++;
-            if(num == keyChar.length);{
+            if(num == keyChar.length){
                 num = 0;
             }
         }
@@ -102,7 +102,8 @@ public class Key {
             String temKey;
             keyPair = switchFunc(keyPair,i);
             temKey = getKey(keyPair);
-            keys.add(i,temKey);
+//            keys.add(i,temKey);
+            keys.add(temKey);
         }
         return keys;
     }

@@ -184,6 +184,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 1:
                 {
@@ -193,6 +194,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 2:
                 {
@@ -202,6 +204,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 3:
                 {
@@ -211,6 +214,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 4:
                 {
@@ -220,6 +224,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 5:
                 {
@@ -229,6 +234,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 6:
                 {
@@ -238,6 +244,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
                 case 7:
                 {
@@ -247,6 +254,7 @@ public class DES {
                         sNumCode = "0" + sNumCode;
                     }
                     text32 = text32 + sNumCode;
+                    break;
                 }
             }
         }
@@ -336,9 +344,17 @@ public class DES {
             String aaa = iterator1.next();
             cipherText.add(this.DESCipher(key, aaa));
         }
-        String cipher = stringByte.BinaryToString(cipherText);
+        //String cipher = stringByte.BinaryToString(cipherText);
         //System.out.println("加密完成 密文："+stringByte.BinaryToString(cipherText));
-        return stringByte.BinaryToString(cipherText);
+        //return stringByte.BinaryToString(cipherText);
+        String test = "";
+        for (String a : cipherText)
+        {
+            test = test + a;
+        }
+        //System.out.println("加密完成 密文："+stringByte.BinaryToString(cipherText));
+        //return stringByte.BinaryToString(cipherText);
+        return test;
 
 
     }
@@ -346,7 +362,15 @@ public class DES {
     public String deCipher(String text,String key){
         StringByte stringByte = new StringByte();
         ArrayList<String> cipherText1 = new ArrayList<>();
-        cipherText1 = stringByte.StringToBinary(text);
+        //cipherText1 = stringByte.StringToBinary(text);
+        //List<String> cipherText1 = new List<String>();
+        String temp = text;
+        while (temp.length()>= 64)
+        {
+            String a = temp.substring(0, 64);
+            cipherText1.add(a);
+            temp = temp.substring(64);
+        }
         Iterator<String> iterator2 = cipherText1.iterator();
         ArrayList<String> test = new ArrayList<>();
         while (iterator2.hasNext()) {
@@ -362,7 +386,7 @@ public class DES {
             DES des= new DES();
             String cipher = des.cipher("这个参数放明文字符串","密钥");
             System.out.println(cipher);
-            String deciper = des.DESDecipher(cipher,"密钥");
+            String deciper = des.deCipher(cipher,"密钥");
             System.out.println(deciper);
 
 

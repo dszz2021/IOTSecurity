@@ -11,10 +11,10 @@ namespace ConsoleApp1
         {
             DES des = new DES();
             String cipher = des.cipher("caotamad个比的妈卖批", "密钥");
-           Console.WriteLine(cipher);
+            Console.WriteLine(cipher);
             String deciper = des.deCipher(cipher, "密钥");
             Console.WriteLine(deciper);
-
+            
             /*  DES dES = new DES();
               string cipher = dES.cipher("123465","123");
               Console.WriteLine("  cipher: " + cipher);
@@ -54,6 +54,8 @@ namespace ConsoleApp1
                 Console.WriteLine(a);
                 int ax = Convert.ToInt32(a, 2);
                 Console.WriteLine(ax);*/
+
+            /*  string cipher = RSA.RSAEncrypt();*/
         }
     }
 
@@ -466,16 +468,16 @@ namespace ConsoleApp1
                  String aaa = iterator1.next();
                  cipherText.add(this.DESCipher(key, aaa));
              }*/
-            String cipher = stringByte.BinaryToString(cipherText);
+           // String cipher = stringByte.BinaryToString(cipherText);
 
-       /*     string test="";
-            foreach(string a in cipherText)
+            string test = "";
+            foreach (string a in cipherText)
             {
                 test = test + a;
-            }*/
+            }
             //System.out.println("加密完成 密文："+stringByte.BinaryToString(cipherText));
-            return stringByte.BinaryToString(cipherText);
-           // return test;
+            //return stringByte.BinaryToString(cipherText);
+            return test;
 
 
         }
@@ -484,14 +486,14 @@ namespace ConsoleApp1
         {
             StringByte stringByte = new StringByte();
             List<string> cipherText1 = new List<string>();
-           /* string temp = text;
+            string temp = text;
             while (temp.Length >= 64)
             {
                 string a = temp.Substring(0, 64);
                 cipherText1.Add(a);
                 temp = temp.Substring(64);
-            }*/
-            cipherText1 = stringByte.StringToBinary(text);
+            }
+            //cipherText1 = stringByte.StringToBinary(text);
             List<string> test = new List<string>();
             foreach (String aaa in cipherText1)
             {
