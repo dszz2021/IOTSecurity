@@ -26,9 +26,6 @@ using static Message1.BodyA.BodyA2;
 
 namespace WpfApp1
 {
-    /// <summary>
-    /// MainWindow.xaml 的交互逻辑
-    /// </summary>
     public partial class MainWindow : Window
     {
         Thread threadClient = null;
@@ -54,20 +51,19 @@ namespace WpfApp1
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            BodyD5 bodyD5 = new BodyD5("1","11","123");
-            string bodyjson = JsonConvert.SerializeObject(bodyD5);         
+            BodyD5 bodyD5 = new BodyD5("1", "11", "123");
+            string bodyjson = JsonConvert.SerializeObject(bodyD5);
             //BodyD1 t = JsonConvert.DeserializeObject<BodyD1>(bodyjson);
             Message message = new Message(0xd, 0x5, bodyjson);
-            string messagJson = JsonConvert.SerializeObject(message);       
+            string messagJson = JsonConvert.SerializeObject(message);
             ClientSendMsg(messagJson);
         }
         void ClientSendMsg(string sendMsg)
         {
             //将输入的内容字符串转换为机器可以识别的字节数组     
-            byte[] arrClientSendMsg = Encoding.UTF8.GetBytes(sendMsg+"\n");
+            byte[] arrClientSendMsg = Encoding.UTF8.GetBytes(sendMsg + "\n");
             //调用客户端套接字发送字节数组     
             socketClient.Send(arrClientSendMsg);
-            
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -406,8 +402,5 @@ namespace WpfApp1
             currentTime = DateTime.Now;
             return currentTime;
         }
-
-}
-
-
+    }
 }

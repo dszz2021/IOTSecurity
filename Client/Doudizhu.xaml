@@ -7,10 +7,10 @@
         Title="斗地主" Height="750" MinHeight="750" MaxHeight="750" Width="1024" MinWidth="1024" MaxWidth="1024" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Closing="Test" >
 
     <Grid>
-        <Image Margin="0,0,-1,-0.5" Source="Resources\DDZBackground.jpg"  Stretch="Fill"/>
+        <Image Margin="0,0,-1,-0.5" Source="Resources\DDZBackground.jpg" Stretch="Fill"/>
         <MediaElement x:Name="ddzMusic" Source="Resources\sound.mp3" HorizontalAlignment="Left" Height="100" Margin="120,58,0,0" VerticalAlignment="Top" Width="100" Visibility="Collapsed"/>
 
-        <Menu VerticalAlignment="Top" Height="22">
+        <Menu VerticalAlignment="Top" Height="24">
             <Menu.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFF6F6F6" Offset="0.25"/>
@@ -39,14 +39,15 @@
 
         <Button x:Name="_4_output" Content="出牌" HorizontalAlignment="Left" Margin="300,500,0,0" VerticalAlignment="Top" Height="36" Width="75" FontSize="13" Click="Output_Click" Visibility="Hidden" IsEnabled="False"/>
         <Button x:Name="_4_noOutput" Content="不出" HorizontalAlignment="Left" Margin="640,500,0,0" VerticalAlignment="Top" Height="36" Width="75" FontSize="13" Click="NoOutput_Click" Visibility="Hidden"/>
+
+        <Image x:Name="midPlayer" Source="Resources\Host.jpg" Height="50" Margin="237,632,730.6,38.8" Width="50" Stretch="Fill" Visibility="Hidden"/>
+        <Image x:Name="leftPlayer" Source="Resources\Host.jpg" Height="50" Margin="10,366,957.6,304.8" Width="50" Stretch="Fill" Visibility="Hidden"/>
+        <Image x:Name="rightPlayer" Source="Resources\Host.jpg" Height="50" Margin="929,388,38.6,282.8" Width="50" Stretch="Fill" Visibility="Hidden"/>
         
-        <Button Content="Button" HorizontalAlignment="Left" Margin="300,420,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="475,420,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="640,420,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_2"/>
-        
-        <Image x:Name="midPlayer" HorizontalAlignment="Left" Height="100" Margin="400,500,0,0" VerticalAlignment="Top" Width="100"/>
-        <Image x:Name="leftPlayer" HorizontalAlignment="Left" Height="100" Margin="10,300,0,0" VerticalAlignment="Top" Width="100"/>
-        <Image x:Name="rightPlayer" HorizontalAlignment="Left" Height="100" Margin="900,300,0,0" VerticalAlignment="Top" Width="100"/>
+        <Label x:Name="left" Content=" " HorizontalAlignment="Left" Margin="202,253,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+        <Label x:Name="right" Content=" " HorizontalAlignment="Left" Margin="771,253,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+        <Label x:Name="middle" Content=" " HorizontalAlignment="Left" Margin="506,483,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+        <Label x:Name="multiple" Content="Label" HorizontalAlignment="Left" Margin="287,29,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
 
     </Grid>
 </Window>

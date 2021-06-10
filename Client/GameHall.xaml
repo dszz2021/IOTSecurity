@@ -14,7 +14,8 @@
         <ListView x:Name="gameLV" HorizontalAlignment="Left" Height="177" Margin="5,233,0,0" ItemContainerStyle="{StaticResource ListViewItemStyle}" VerticalAlignment="Top" Width="152" SelectionChanged="RoomLoad">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="游戏名称" Width="142"  DisplayMemberBinding="{Binding gameName}"/>
+                    <GridViewColumn Header="编号" Width="70"  DisplayMemberBinding="{Binding gameNum}"/>
+                    <GridViewColumn Header="名称" Width="70"  DisplayMemberBinding="{Binding gameName}"/>
                 </GridView>
             </ListView.View>
         </ListView>

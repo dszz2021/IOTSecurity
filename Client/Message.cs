@@ -2,13 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-
 namespace Message1
 {
-
     public enum CardType
     {
-        singleCard, doubleCards, shunZi, lianDui, threeWithOne, threeWithTwo, planeOne, planeTwo, bomb, bombKing, outOfRule, noCard
+        singleCard, doubleCards, threeCards, shunZi, lianDui, threeWithOne, threeWithTwo, planeOne, planeTwo, bomb, bombKing, outOfRule, noCard
     }
 
     public class Message
@@ -133,7 +131,14 @@ namespace Message1.BodyA
             this.KeyCandTgs = builder.KeyCandTgs;
             this.TicketTgs = builder.TicketTgs;
         }
-
+        public BodyA2(string kct, string idtgs, string ts2, string lt2, string ttgs) : base(0xa2)
+        {
+            KeyCandTgs = kct;
+            IDtgs = idtgs;
+            TS2 = ts2;
+            Lifetime2 = lt2;
+            TicketTgs = ttgs;
+        }
     }
 
     public class TicketTGS
@@ -270,7 +275,7 @@ namespace Message1.BodyB
     public class BodyB1 : MessageBody
     {
         public string IDv;
-        public string TicketTgs;//序列化并且加密之后的ticket
+        public string TicketTgs;    //序列化并且加密之后的ticket
         public string Authenticator; //序列化并且加密之后的Authenticator
 
         public BodyB1(string IDv, string TicketTgs, string Authenticator) : base(0xb1)
@@ -736,7 +741,7 @@ namespace Message1.BodyE
         public String gameID;
         public String roomID;
         public String clientID;//地主的ID
-        public int multiple;//当前倍数
+        public int multiple;   //当前倍数
         public BodyE10(String gameID, String roomID, String clientID, int multiple) : base(0xe10)
         {
             this.gameID = gameID;
@@ -1166,5 +1171,4 @@ namespace Message1.Error
             error = "TGS认证时，Ticket过期";
         }
     }
-
 }

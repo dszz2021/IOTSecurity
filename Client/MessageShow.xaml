@@ -9,16 +9,16 @@
 
         <GroupBox Header="发送报文" HorizontalAlignment="Left" Height="198" Margin="10,10,0,0" VerticalAlignment="Top" Width="301"/>
         <Label Content="加密密文" HorizontalAlignment="Left" Margin="36,49,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="117" Margin="19,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
+        <TextBox x:Name="send_cipher" HorizontalAlignment="Left" Height="117" Margin="19,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
         <Label Content="解密明文" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.247,0.422" Margin="222,49,0,0"/>
         <Label Content="——&gt;" HorizontalAlignment="Left" Margin="121,114,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold" RenderTransformOrigin="0.487,0.49"/>
-        <TextBox HorizontalAlignment="Left" Height="117" Margin="206,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
+        <TextBox x:Name="send_plain" HorizontalAlignment="Left" Height="117" Margin="206,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
         <GroupBox Header="接收报文" HorizontalAlignment="Left" Height="198" Margin="10,219,0,-26.6" VerticalAlignment="Top" Width="301"/>
         <Label Content="加密密文" HorizontalAlignment="Left" Margin="36,258,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="117" Margin="19,289,0,-15.6" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
+        <TextBox x:Name="receive_cipher" HorizontalAlignment="Left" Height="117" Margin="19,289,0,-15.6" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
         <Label Content="解密明文" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.247,0.422" Margin="222,258,0,0"/>
         <Label Content="——&gt;" HorizontalAlignment="Left" Margin="121,323,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold" RenderTransformOrigin="0.487,0.49"/>
-        <TextBox HorizontalAlignment="Left" Height="117" Margin="206,289,0,-15.6" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
+        <TextBox x:Name="receive_plain" HorizontalAlignment="Left" Height="117" Margin="206,289,0,-15.6" TextWrapping="Wrap" VerticalAlignment="Top" Width="97" IsEnabled="False"/>
 
     </Grid>
 </Window>

@@ -1,32 +1,42 @@
 ﻿using System;
+using Message1;
 using System.Linq;
 using System.Windows;
+using System.Threading;
+using System.Net.Sockets;
 using WpfApp1.CardsClass;
 using System.Collections;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Media.Animation;
+using System.Text.RegularExpressions;
+using Message1.BodyE;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace WpfApp1
 {
     public partial class Window4 : Window
     {
+        Socket socketClient = null;
+        public static Window2 gameHall = null;
         public static Window4 DDZ = null;
         //游戏状态
-        enum GameState { dealCard, grab, wait, redouble, playCard, settlement }
+        public enum GameState { ready, dealCard, grab, wait, redouble, playCard, settlement }
         //出牌类型
-        enum CardsType { singleCard, doubleCards, threeCards, shunZi, lianDui, threeWithOne, threeWithTwo, planeOne, planeTwo, bomb, bombKing, outOfRule, noCard }
+        public enum CardsType
+        {
+            singleCard, doubleCards, threeCards, shunZi, lianDui, threeWithOne, threeWithTwo, planeOne, planeTwo, bomb, bombKing, outOfRule, noCard
+        }
 
-        //初始游戏状态为 wait
-        static GameState gameState = GameState.wait;
+        //初始游戏状态为 ready
+        static GameState gameState = GameState.ready;
         //初始出牌类型为 noCard
         static CardsType trueType = CardsType.noCard;
-        static CardsType lastType = CardsType.noCard;
-        //游戏轮次（三次为一轮）
-        static int gameCycle = 0;
         //扑克比较数组
         static int[] arrayCompare;
-
+        //玩家ID集合
+        string[] player = new string[3];
         //扑克牌集合
         static List<CardBase> cardsList = new List<CardBase>();
         //左侧玩家扑克集合
@@ -39,72 +49,233 @@ namespace WpfApp1
         static List<CardBase> handCard = new List<CardBase>();
         //出牌集合
         static List<CardBase> outPutCard = new List<CardBase>();
+        //结算清单
+        Dictionary<String, int> settleMent;
+        //游戏ID
+        readonly string gameID;
+        //房间ID
+        readonly string roomID;
 
         public Window4()
         {
             DDZ = this;
-            //ddzMusic.Play();
             InitializeComponent();
         }
+        public Window4(Window2 w, string myID, Socket socket)
+        {
+            gameHall = w;
+            gameID = w.GetGameID();
+            roomID = w.GetRoomID();
+            DDZ = this;
+            socketClient = socket;
+            player[1] = myID;
+            InitializeComponent();
+        }
+        //发送报文 -> 服务器
+        void ClientSendMsg(string sendMsg)
+        {
+            //将输入的内容字符串转换为机器可以识别的字节数组     
+            byte[] arrClientSendMsg = Encoding.UTF8.GetBytes(sendMsg + "\n");
+            //调用客户端套接字发送字节数组     
+            socketClient.Send(arrClientSendMsg);
+        }
+        //设置当前倍数
+        public void SetMultiple(int mul)
+        {
+            multiple.Content = mul;
+        }
+        //设置上家出牌类型
+        internal void SetLastType(CardType cardType)
+        {
+            trueType = (CardsType)cardType;
+            throw new NotImplementedException();
+        }
+        //设置玩家显示信息
+        public void SetOutMessage(string id, bool ready, string one, string two)
+        {
+            int location = GetPlayer(id);
+            if (location != -1)
+            {
+                if (ready)
+                {
+                    //显示出玩家准备
+                    if (location == 0)
+                    {
+                        left.Visibility = Visibility.Visible;
+                        left.Content = one;
+                    }
+                    else if (location == 1)
+                    {
+                        middle.Visibility = Visibility.Visible;
+                        middle.Content = one;
+                    }
+                    else
+                    {
+                        right.Visibility = Visibility.Visible;
+                        right.Content = one;
+                    }
+                }
+                else
+                {
+                    //显示出玩家未准备
+                    if (location == 0)
+                    {
+                        left.Visibility = Visibility.Visible;
+                        left.Content = two;
+                    }
+                    else if (location == 1)
+                    {
+                        middle.Visibility = Visibility.Visible;
+                        middle.Content = two;
+                    }
+                    else
+                    {
+                        right.Visibility = Visibility.Visible;
+                        right.Content = two;
+                    }
+                }
+            }
+        }
+        //设置出牌信息
+        public void SetOutPutCards(ArrayList arrayList, string id)
+        {
+            //清除桌面上已打出的扑克
+            RemoveAllOutPutCards();
+            //打出领桌的扑克
+            int num = GetPlayer(id);
+            if (num == 0)
+                RenewCards(arrayList, leftCards);
+            else if (num == 2)
+                RenewCards(arrayList, rightCards);
+            //出牌动画
+            OutputAnimation();
+        }
+        //更新出牌集合
+        public void RenewCards(ArrayList arrayList, List<CardBase> sideCards)
+        {
+            for (int i = 0; i < arrayList.Count; i++)
+            {
+                CardBase card = new CardBase();
+                //将ArrayList转换为string便于切分
+                string str = arrayList[i].ToString();
+                //将string切分为花色和点数
+                string[] str1 = Regex.Split(str, "_0x_", RegexOptions.IgnoreCase);
+                string[] str2 = Regex.Split(str1[0], "0x", RegexOptions.IgnoreCase);
+                //设置扑克点数
+                card.CardNumber = Convert.ToInt32(str2[0], 16) + 2;
+                //设置扑克花色
+                if (card.CardNumber > 15)
+                    card.CardColor = "Joker";
+                else
+                {
+                    if (str1[1].Equals(1))
+                        card.CardColor = "Club";
+                    else if (str1[1].Equals(2))
+                        card.CardColor = "Diamond";
+                    else if (str1[1].Equals(3))
+                        card.CardColor = "Spader";
+                    else if (str[1].Equals(4))
+                        card.CardColor = "Heart";
+                }
+                outPutCard.Add(card);
+                sideCards.RemoveAt(i);
+            }
+        }
+        //设置结算清单
+        public void SetSettleMent(Dictionary<String, int> dic)
+        {
+            settleMent = dic;
+        }
+        //获取玩家ID
+        public int GetPlayer(string id)
+        {
+            for (int i = 0; i < player.Length; i++)
+            {
+                if (player[i].Equals(id))
+                    return i;
+            }
+            return -1;
+        }
+        //底牌 -> 地主
+        public void Landlord_Cards(string id)
+        {
+            //获取地主位置
+            int location = GetPlayer(id);
+            //展示底牌
+            foreach (CardBase card in handCard)
+                card.SetCard();
+            //睡眠1000ms
+            Thread.Sleep(2000);
+            //底牌动画
+            Storyboard story = new Storyboard();
+            for (int i = 0; i < 3; i++)
+            {
+                Canvas.SetLeft(handCard[i].Card, 450);
+                Canvas.SetTop(handCard[i].Card, 200);
+            }
+            //分发底牌
+            if (location == 0)
+            {
+                for (int i = 51; i < 54; i++)
+                {
+                    leftCards.Add(handCard[i - 51]);
+                    Point LeftLocation = new Point(-370, -150 + 7 * i);
+                    CardAnimation animation = new CardAnimation(this, handCard[i - 51].Card);
+                    animation.MoveCard(LeftLocation.X, LeftLocation.Y, TimeSpan.FromSeconds(0.05 * i));
+                    leftPlayer.Visibility = Visibility.Visible;
+                }
+            }
+            else if (location == 1)
+            {
+                midCards.Add(handCard[1]);
+                midCards.Add(handCard[2]);
+                midCards.Add(handCard[3]);
+                midPlayer.Visibility = Visibility.Visible;
+                midCards = SortCards(midCards, DDZ.CanvasTable, story, 0.1);
+            }
+            else if (location == 2)
+            {
+                for (int i = 51; i < 54; i++)
+                {
+                    rightCards.Add(handCard[i - 51]);
+                    Point RightLocation = new Point(390, -150 + 7 * i);
+                    CardAnimation animation = new CardAnimation(this, handCard[i - 51].Card);
+                    animation.MoveCard(RightLocation.X, RightLocation.Y, TimeSpan.FromSeconds(0.05 * i));
+                    rightPlayer.Visibility = Visibility.Visible;
+                }
+            }
+        }
 
-        //斗地主准备or取消准备
+        //准备or取消准备
         private void Button_Ready_Click(object sender, RoutedEventArgs e)
         {
             if (_1_ready.Content.Equals("准备"))
             {
                 _1_ready.Content = "取消准备";
                 _1_return.IsEnabled = false;
-                //向服务器发送 准备 信号
-
-                gameState = GameState.dealCard;
-                GetCardCollection();
-                Cycle_Game_State(gameState);
+                //封装报文
+                BodyE1 bodyE1 = new BodyE1(gameID, roomID, player[1], true);
+                string bodyjson = JsonConvert.SerializeObject(bodyE1);
+                Message message = new Message(0xD, 0x7, bodyjson);
+                string messagJson = JsonConvert.SerializeObject(message);
+                //向服务器发送报文
+                ClientSendMsg(messagJson);
             }
             else
             {
                 _1_ready.Content = "准备";
                 _1_return.IsEnabled = true;
-                //向服务器发送 取消准备 信号
-
+                //封装报文
+                BodyE1 bodyE1 = new BodyE1(gameID, roomID, player[1], false);
+                string bodyjson = JsonConvert.SerializeObject(bodyE1);
+                Message message = new Message(0xD, 0x7, bodyjson);
+                string messagJson = JsonConvert.SerializeObject(message);
+                //向服务器发送报文
+                ClientSendMsg(messagJson);
             }
         }
-
-        //循环监听报文
-        public void Receive_Server()
-        {
-            //监听服务器发送的报文
-
-            //转换游戏状态
-            gameState = GameState.dealCard;
-            GetCardCollection();
-            Cycle_Game_State(gameState);
-
-            //抢地主
-            gameState = GameState.grab;
-            Cycle_Game_State(gameState);
-
-            //地主确定 -> 展示底牌
-            foreach (CardBase card in handCard)
-            {
-                card.SetCard();
-            }
-            Landlord_Cards();//地主发牌
-
-            //加倍
-            gameState = GameState.redouble;
-            Cycle_Game_State(gameState);
-
-            //出牌
-            gameState = GameState.playCard;
-            Cycle_Game_State(gameState);
-
-            //结算
-            gameState = GameState.settlement;
-            Cycle_Game_State(gameState);
-        }
-
         //游戏状态循环
-        private void Cycle_Game_State(GameState state)
+        public void Cycle_Game_State(GameState state)
         {
             switch (state)
             {
@@ -143,45 +314,62 @@ namespace WpfApp1
                     _4_noOutput.Visibility = Visibility.Visible;
                     break;
                 case GameState.settlement:
-                    Settlement settlement = new Settlement();
+                    Settlement settlement = new Settlement(settleMent);
                     settlement.ShowDialog();
                     Close();
                     break;
             }
         }
         //获取一副扑克牌
-        public static void GetCardCollection()
+        public void GetCardCollection(ArrayList arrayList)
         {
-            for (int i = 0; i < 51; i++)
+            for (int i = 0; i < arrayList.Count; i++)
             {
                 CardBase card = new CardBase();
-                //获得本家的一幅扑克
-                if (i % 3 == 1)
-                {
-                    card.CardColor = "Club";
-                    Random random = new Random(i);
-                    card.CardNumber = random.Next(3, 15);
-                    midCards.Add(card);
-                }
+                //将ArrayList转换为string便于切分
+                string str = arrayList[i].ToString();
+                //将string切分为花色和点数
+                string[] str1 = Regex.Split(str, "_0x_", RegexOptions.IgnoreCase);
+                string[] str2 = Regex.Split(str1[0], "0x", RegexOptions.IgnoreCase);
+                //设置扑克点数
+                card.CardNumber = Convert.ToInt32(str2[0], 16) + 2;
+                //设置扑克花色
+                if (card.CardNumber > 15)
+                    card.CardColor = "Joker";
                 else
                 {
-                    card.CardColor = "FaceDown";
-                    card.CardNumber = 0;
+                    if (str1[1].Equals(1))
+                        card.CardColor = "Club";
+                    else if (str1[1].Equals(2))
+                        card.CardColor = "Diamond";
+                    else if (str1[1].Equals(3))
+                        card.CardColor = "Spader";
+                    else if (str[1].Equals(4))
+                        card.CardColor = "Heart";
                 }
-                card.SetCard();
-                cardsList.Add(card);
+                //本家扑克
+                if (i < 17)
+                {
+                    midCards.Add(card);
+                    card.SetCard();
+                    cardsList.Add(card);
+                }
+                //设置底牌
+                else
+                    handCard.Add(card);
             }
-            //设置底牌
-            for (int i = 0; i < 3; i++)
+            //设置左右两家的扑克
+            for (int i = 0; i < 17; i++)
             {
-                Random random = new Random(i);
                 CardBase card = new CardBase
                 {
-
-                    CardColor = "Club",
-                    CardNumber = random.Next(3, 15)
+                    CardColor = "FaceDown",
+                    CardNumber = 0
                 };
-                handCard.Add(card);
+                leftCards.Add(card);
+                cardsList.Add(card);
+                rightCards.Add(card);
+                cardsList.Add(card);
             }
         }
         //用于鼠标点击牌是否被选择
@@ -300,17 +488,25 @@ namespace WpfApp1
                     //飞机（三带一）
                     if (cards.Length % 4 == 0)
                     {
+                        int num = 0;
                         bool isPlane1 = false;
-                        int numPlane1 = cards.Length / 4;
-                        int trueNumPlane1 = 0;
+                        int[] numPlane1 = new int[cards.Length / 4];
                         for (int i = 0; i < cards.Length - 2; i++)
                         {
+                            //判断是否为 threeCards
                             if ((cards[i] == cards[i + 1]) && (cards[i + 1] == cards[i + 2]) && cards[i] < 15)
-                                trueNumPlane1++;
-                            if (numPlane1 == trueNumPlane1)
-                                isPlane1 = true;
-                            else
-                                isPlane1 = false;
+                            {
+                                numPlane1[num] = cards[i];
+                                num++;
+                            }
+                            //判断是否为 plane
+                            for (int j = 0; i < numPlane1.Length - 1; i++)
+                            {
+                                if (numPlane1[j] + 1 == numPlane1[j + 1])
+                                    isPlane1 = true;
+                                else
+                                    isPlane1 = false;
+                            }
                         }
                         if (isPlane1)
                             return CardsType.planeOne;
@@ -320,20 +516,31 @@ namespace WpfApp1
                 if (cards.Length % 5 == 0)
                 {
                     bool isPlane2 = false;
-
-                    int numPlane2 = cards.Length / 5;
-                    int trueNumPlane21 = 0;
-                    int trueNumPlane22 = 0;
-                    for (int i = 0; i < cards.Length - 2; i++)
+                    int[] numPlaneArr = new int[cards.Length / 5];
+                    int trueNumPlane3 = 0;
+                    int trueNumPlane2 = 0;
+                    for (int i = 1; i < cards.Length - 2; i++)
                     {
-                        if (cards[i] == cards[i + 1] && cards[i] != cards[i + 2])
-                            trueNumPlane21++;
-                        if ((cards[i] == cards[i + 1]) && (cards[i + 1] == cards[i + 2]) && cards[i] < 15)
-                            trueNumPlane22++;
-                        if (numPlane2 == trueNumPlane21 && numPlane2 == trueNumPlane22)
-                            isPlane2 = true;
-                        else
-                            isPlane2 = false;
+                        //判断是否为 threeCards
+                        if (cards[i - 1] == cards[i + 1] && cards[i + 1] < 15)
+                        {
+                            numPlaneArr[trueNumPlane3] = cards[i];
+                            trueNumPlane3++;
+                        }
+                        //判断是否为 doubleCards
+                        if ((cards[i] == cards[i + 1] && cards[i] != cards[i - 1]) || (cards[i - 1] == cards[i] && cards[i] != cards[i + 1]))
+                            trueNumPlane2++;
+                    }
+                    //判断是否为 plane
+                    if (trueNumPlane3 == trueNumPlane2 && trueNumPlane3 == cards.Length / 5)
+                    {
+                        for (int i = 0; i < numPlaneArr.Length - 1; i++)
+                        {
+                            if (numPlaneArr[i] + 1 == numPlaneArr[i + 1])
+                                isPlane2 = true;
+                            else
+                                isPlane2 = false;
+                        }
                     }
                     if (isPlane2)
                         return CardsType.planeTwo;
@@ -341,7 +548,6 @@ namespace WpfApp1
             }
             return CardsType.outOfRule;
         }
-
         //判断能否出牌
         private static bool CompareCard(CardsType myType, int[] myCard, int[] otherCard)
         {
@@ -391,8 +597,7 @@ namespace WpfApp1
                 return true;
             return false;
         }
-
-        //发牌状态
+        //发牌
         private void DealCards()
         {
             //居中显示所有牌
@@ -408,22 +613,22 @@ namespace WpfApp1
                 //左侧玩家
                 if (i % 3 == 0)
                 {
-                    Point LeftLocation = new Point(-370, -150 + 10 * i);
-                    CardAnimation animation = new CardAnimation(this, cardsList[i].Card);
+                    Point LeftLocation = new Point(-370, -150 + 7 * i);
+                    CardAnimation animation = new CardAnimation(this, leftCards[i / 3].Card);
                     animation.MoveCard(LeftLocation.X, LeftLocation.Y, TimeSpan.FromSeconds(0.05 * i));
                 }
                 //中间玩家
                 else if (i % 3 == 1)
                 {
                     Point MiddleLocation = new Point(-240 + 10 * i, 330);
-                    CardAnimation animation = new CardAnimation(this, cardsList[i].Card);
+                    CardAnimation animation = new CardAnimation(this, midCards[i / 3].Card);
                     animation.MoveCard(MiddleLocation.X, MiddleLocation.Y, TimeSpan.FromSeconds(0.05 * i));
                 }
                 //右侧玩家
                 else if (i % 3 == 2)
                 {
-                    Point RightLocation = new Point(390, -150 + 10 * i);
-                    CardAnimation animation = new CardAnimation(this, cardsList[i].Card);
+                    Point RightLocation = new Point(390, -150 + 7 * i);
+                    CardAnimation animation = new CardAnimation(this, rightCards[i / 3].Card);
                     animation.MoveCard(RightLocation.X, RightLocation.Y, TimeSpan.FromSeconds(0.05 * i));
                 }
             }
@@ -449,7 +654,6 @@ namespace WpfApp1
                     Canvas.SetTop(handCard[i].Card, 10);
                 }
             }
-
         }
         //扑克牌排序
         public static List<CardBase> SortCards(List<CardBase> cardList, Canvas canvasTable, Storyboard story, double sortSpeed)
@@ -480,24 +684,24 @@ namespace WpfApp1
             }
             return cards;
         }
-
-        //出牌按钮点击事件
+        //出牌
         private void Output_Click(object sender, RoutedEventArgs e)
         {
             //获取已选择的扑克
             var query = from c in midCards where c.Card.IsSelected == true orderby c.CardNumber select c;
             List<CardBase> selectCard = query.ToList();
-
+            //获取发送报文ArrayList
+            ArrayList arrayList = new ArrayList(selectCard.Count);
+            for (int i = 0; i < selectCard.Count; i++)
+                arrayList[i] = selectCard[i];
+            //获取数字集合
             int[] cardArray = new int[selectCard.Count];
             for (int j = 0; j < selectCard.Count; j++)
-            {
                 cardArray[j] = selectCard[j].CardNumber;
-            }
             //设置"真实"出牌类型
             trueType = JudgeCardType(cardArray);
             arrayCompare = cardArray;
             //出牌以及动画
-            //List<CardBase> outPutCard = new List<CardBase>();
             foreach (int n in cardArray)
             {
                 var q = from c in midCards where c.CardNumber == n && c.Card.IsSelected == true select c;
@@ -505,13 +709,51 @@ namespace WpfApp1
                 q.First().Card.IsOutPut = true;
                 midCards.Remove(q.First());
             }
-
             //重新排序
             Storyboard story = new Storyboard();
             SortCards(midCards, CanvasTable, story, 0.01);
             story.Begin();
-
             //出牌动画
+            OutputAnimation();
+            //封装报文
+            BodyE4 bodyE4 = new BodyE4.BodyE4Builder().
+                setgameID(gameID).
+                setroomID(roomID).
+                setclientID(player[1]).
+                setcardInformation(arrayList).
+                setcardType((CardType)trueType).build();
+            string bodyjson = JsonConvert.SerializeObject(bodyE4);
+            Message message = new Message(0xD, 0x4, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
+            //出牌按钮隐藏
+            _4_output.Visibility = Visibility.Hidden;
+            _4_output.IsEnabled = false;
+            _4_noOutput.Visibility = Visibility.Hidden;
+        }
+        private void NoOutput_Click(object sender, RoutedEventArgs e)
+        {
+            ArrayList arrayList = null;
+            //封装报文
+            BodyE4 bodyE4 = new BodyE4.BodyE4Builder().
+                setgameID(gameID).
+                setroomID(roomID).
+                setclientID(player[1]).
+                setcardInformation(arrayList).
+                setcardType((CardType)trueType).build();
+            string bodyjson = JsonConvert.SerializeObject(bodyE4);
+            Message message = new Message(0xD, 0x4, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
+            //出牌按钮隐藏
+            _4_output.Visibility = Visibility.Hidden;
+            _4_noOutput.Visibility = Visibility.Hidden;
+        }
+        //出牌动画
+        public void OutputAnimation()
+        {
             Storyboard storyOutPut = new Storyboard();
             for (int i = 0; i < outPutCard.Count; i++)
             {
@@ -524,21 +766,8 @@ namespace WpfApp1
                 animation.MoveCard(point.X + i * 25, point.Y, TimeSpan.FromSeconds(i * 0.01), storyOutPut);
             }
             storyOutPut.Begin();
-            //发送“出牌”报文
-
-            _4_output.Visibility = Visibility.Hidden;
-            _4_output.IsEnabled = false;
-            _4_noOutput.Visibility = Visibility.Hidden;
         }
-        private void NoOutput_Click(object sender, RoutedEventArgs e)
-        {
-            //发送“不出牌”报文
-            RemoveAllOutPutCards();
-            _4_output.Visibility = Visibility.Hidden;
-            _4_noOutput.Visibility = Visibility.Hidden;
-        }
-
-        //清除桌上打出的所有的牌
+        //清除桌上打出的牌
         private void RemoveAllOutPutCards()
         {
             var q = from c in outPutCard where c.Card.IsOutPut == true select c;
@@ -552,57 +781,58 @@ namespace WpfApp1
             }
         }
 
-        #region 抢地主/加倍
+        //抢地主
         private void Grab_Click(object sender, RoutedEventArgs e)
         {
-            //发送“抢”地主报文
-
+            //封装报文
+            BodyE2 bodyE2 = new BodyE2(gameID, roomID, player[1], true);
+            string bodyjson = JsonConvert.SerializeObject(bodyE2);
+            Message message = new Message(0xD, 0x7, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
             _2_grab.Visibility = Visibility.Hidden;
             _2_noGrab.Visibility = Visibility.Hidden;
         }
         private void NoGrab_Click(object sender, RoutedEventArgs e)
         {
-            //发送“不抢”地主报文
+            //封装报文
+            BodyE2 bodyE2 = new BodyE2(gameID, roomID, player[1], false);
+            string bodyjson = JsonConvert.SerializeObject(bodyE2);
+            Message message = new Message(0xD, 0x7, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
 
             _2_grab.Visibility = Visibility.Hidden;
             _2_noGrab.Visibility = Visibility.Hidden;
         }
-
-        //底牌 -> 地主
-        private void Landlord_Cards()
-        {
-            Storyboard story = new Storyboard();
-            for (int i = 0; i < 3; i++)
-            {
-                midCards.Add(handCard[i]);
-                Canvas.SetLeft(handCard[i].Card, 450);
-                Canvas.SetTop(handCard[i].Card, 200);
-                /*                
-                Point MiddleLocation = new Point(-240, 520);
-                CardAnimation animation = new CardAnimation(this, handCard[i].Card);
-                animation.MoveCard(MiddleLocation.X, MiddleLocation.Y, TimeSpan.FromSeconds(0), story);
-                */
-            }
-            midCards = SortCards(midCards, DDZ.CanvasTable, story, 0.001);
-        }
-
+        //加倍
         private void Double_Click(object sender, RoutedEventArgs e)
         {
-            //发送“加倍”报文
-
+            //封装报文
+            BodyE3 bodyE3 = new BodyE3(gameID, roomID, player[1], true);
+            string bodyjson = JsonConvert.SerializeObject(bodyE3);
+            Message message = new Message(0xD, 0x7, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
             _3_double.Visibility = Visibility.Hidden;
             _3_noDouble.Visibility = Visibility.Hidden;
         }
         private void Nodouble_Click(object sender, RoutedEventArgs e)
         {
-            //发送“不加倍”报文
-
+            //封装报文
+            BodyE3 bodyE3 = new BodyE3(gameID, roomID, player[1], true);
+            string bodyjson = JsonConvert.SerializeObject(bodyE3);
+            Message message = new Message(0xD, 0x7, bodyjson);
+            string messagJson = JsonConvert.SerializeObject(message);
+            //向服务器发送报文
+            ClientSendMsg(messagJson);
             _3_double.Visibility = Visibility.Hidden;
             _3_noDouble.Visibility = Visibility.Hidden;
         }
-        #endregion
 
-        #region 按钮事件
         //菜单按钮 -> 报文展示
         private void Menu_Message_Click(object sender, RoutedEventArgs e)
         {
@@ -613,6 +843,11 @@ namespace WpfApp1
         private void Menu_Setting_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+        //返回按钮 -> 游戏大厅
+        private void Button_Return_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
         //窗口关闭事件
         private void Test(object sender, System.ComponentModel.CancelEventArgs e)
@@ -638,39 +873,12 @@ namespace WpfApp1
             handCard.Clear();
             outPutCard.Clear();
         }
-        //返回按钮 -> 游戏大厅
-        private void Button_Return_Click(object sender, RoutedEventArgs e)
+        //玩家意外退出
+        public void UnexpectedExit(string id)
         {
+            MessageBox.Show("玩家" + id + "意外退出，游戏结束！");
+            Thread.Sleep(1000);
             Close();
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //抢地主
-            gameState = GameState.grab;
-            Cycle_Game_State(gameState);
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            //地主确定 -> 展示底牌
-            foreach (CardBase card in handCard)
-            {
-                card.SetCard();
-            }
-            Landlord_Cards();//地主发牌
-
-            //加倍
-            gameState = GameState.redouble;
-            Cycle_Game_State(gameState);
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            //出牌
-            gameState = GameState.playCard;
-            Cycle_Game_State(gameState);
-        }
     }
-    #endregion 按钮事件
 }

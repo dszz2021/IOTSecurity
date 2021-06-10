@@ -1,64 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1
+//用于DES加密
+namespace WpfApp1
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            DES des = new DES();
-            String cipher = des.cipher("caotamad个比的妈卖批", "密钥");
-            Console.WriteLine(cipher);
-            String deciper = des.deCipher(cipher, "密钥");
-            Console.WriteLine(deciper);
-            
-            /*  DES dES = new DES();
-              string cipher = dES.cipher("123465","123");
-              Console.WriteLine("  cipher: " + cipher);
-              string decipher = dES.deCipher(cipher,"123");
-              Console.WriteLine("decipher: " + decipher);
-  */
-
-            /*   ArrayList array = new ArrayList();
-               array.Add("123");
-               array.Add("456");
-               array.Add("789");
-               array.Add("012");
-               foreach(String s in array)
-               {
-                   Console.WriteLine(s);
-               }
-               Console.WriteLine(" ");
-               array.Reverse();
-               foreach (String s in array)
-               {
-                   Console.WriteLine(s);
-               }*/
-
-            /*          StringBuilder s = new StringBuilder();
-                      s.Append("1111");
-                      s.Append("bbbb");
-                      Console.WriteLine(s.ToString());*/
-            /*string aaa = "abcd";
-            char[] a = { 'a', 'b', 'c', 'd' };
-            Console.WriteLine(aaa.ToCharArray()[1]);
-            Console.WriteLine(string.Join("", a));*/
-            /*    string a = Convert.ToString(9, 2);
-                while (a.Length != 8)
-                {
-                    a = "0" + a;
-                }
-                Console.WriteLine(a);
-                int ax = Convert.ToInt32(a, 2);
-                Console.WriteLine(ax);*/
-
-            /*  string cipher = RSA.RSAEncrypt();*/
-        }
-    }
-
     class DES
     {
         public int[] EpTable = {
@@ -187,7 +133,7 @@ namespace ConsoleApp1
         {
             DesPair pair = new DesPair();
             pair.left = text.Substring(0, 32);
-            pair.right = text.Substring(32,32);
+            pair.right = text.Substring(32, 32);
             return pair;
         }
         /**
@@ -215,8 +161,8 @@ namespace ConsoleApp1
             }
             //int a = Convert.ToInt32(left, 2);
             //int b = Convert.ToInt32(right, 2);
-           // string bs = Convert.ToString(a ^ b, 2);
-           // string abs= string.Join("", result);
+            // string bs = Convert.ToString(a ^ b, 2);
+            // string abs= string.Join("", result);
             return string.Join("", result);
         }
         /**
@@ -369,7 +315,7 @@ namespace ConsoleApp1
             List<string> arrayList = new List<string>();
             List<string> keysList = key.getKeys();
             DesPair pair = initPair(cipherText);
-            foreach(string key1 in keysList)
+            foreach (string key1 in keysList)
             {
                 String temp = "";
                 int x = pair.right.Length;
@@ -427,23 +373,23 @@ namespace ConsoleApp1
 
 
 
-/*
-            for (int i = 0; i < 16; i++)
-            {
-                //System.out.println("pair.right:"+pair.right+" "+pair.right.length());
-                String temp = "";
-                temp = EpExpand(pair.right);
-                //System.out.println("temp:"+temp+" "+temp.length());
+            /*
+                        for (int i = 0; i < 16; i++)
+                        {
+                            //System.out.println("pair.right:"+pair.right+" "+pair.right.length());
+                            String temp = "";
+                            temp = EpExpand(pair.right);
+                            //System.out.println("temp:"+temp+" "+temp.length());
 
-                temp = XOR(temp, (String)keysList[i], 48);
-                //System.out.println("temp:"+temp+" "+temp.length());
-                temp = sBoxHandler(temp);
-                temp = pBoxHandler(temp);
-                temp = XOR(pair.left, temp, 32);
-                //System.out.println("111111111111d");
-                pair.left = pair.right;
-                pair.right = temp;
-            }*/
+                            temp = XOR(temp, (String)keysList[i], 48);
+                            //System.out.println("temp:"+temp+" "+temp.length());
+                            temp = sBoxHandler(temp);
+                            temp = pBoxHandler(temp);
+                            temp = XOR(pair.left, temp, 32);
+                            //System.out.println("111111111111d");
+                            pair.left = pair.right;
+                            pair.right = temp;
+                        }*/
             cipherText = deIpDisplace(pair.right + pair.left);
 
             return cipherText;
@@ -468,7 +414,7 @@ namespace ConsoleApp1
                  String aaa = iterator1.next();
                  cipherText.add(this.DESCipher(key, aaa));
              }*/
-           // String cipher = stringByte.BinaryToString(cipherText);
+            // String cipher = stringByte.BinaryToString(cipherText);
 
             string test = "";
             foreach (string a in cipherText)

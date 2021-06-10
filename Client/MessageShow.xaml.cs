@@ -2,26 +2,31 @@
 
 namespace WpfApp1
 {
-    /// <summary>
-    /// Window5.xaml 的交互逻辑
-    /// </summary>
     public partial class Window5 : Window
     {
         public Window5()
         {
             InitializeComponent();
         }
-        private void Monitor_Father()
+        //发送报文—密文
+        public void SetSendCipher(string str)
         {
-
+            send_cipher.Text = str;
         }
-        private void Show_ReceiveMes()
+        //发送报文—明文
+        public void SetSendPlain(string str)
         {
-
+            send_plain.Text = str;
         }
-        private void Show_SendMes()
+        //接受报文—密文
+        public void SetReceiveCipher(string str)
         {
-
+            receive_cipher.Text = str;
+        }
+        //接受报文—明文
+        public void SetReceivePlain(string str)
+        {
+            receive_plain.Text = str;
         }
     }
 }
